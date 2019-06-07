@@ -1,6 +1,6 @@
 # snake
 
-Demo: http://216.158.238.148:8080
+Demo: http://216.158.238.148/snake.html
 
 ## Project setup
 ```
