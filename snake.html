@@ -12,17 +12,19 @@
     <main class="main">
       <div>
       <header class="header">{{title}}</header>
-      <div class="grid">
-        <div v-for="(index, i) in 16" class="row">
-          <div v-for="(index, j) in 16" :class="{
-            nothing: board[i][j]==0,
-            headSnake: board[i][j]==1,
-            bodySnake: board[i][j]==2,
-            mealSnake: board[i][j]==3
-          }">
+      <div :class="{over: game_over}"></div>
+        <div class="grid">
+          <div v-for="(index, i) in 16" class="row">
+            <div v-for="(index, j) in 16" :class="{
+              nothing: board[i][j]==0,
+              headSnake: board[i][j]==1,
+              bodySnake: board[i][j]==2,
+              mealSnake: board[i][j]==3
+            }">
+            </div>
           </div>
         </div>
-      </div>
+
       <footer class="header">score: {{score}}</footer>
       </div>
     </div>
@@ -201,6 +203,26 @@
     text-align: center;
     padding: 12px 0;
     font-family: 'Rubik', sans-serif;
+  }
+  .over {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #333;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-family: 'Rubik', sans-serif;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    z-index: 3;
   }
   </style>
 </body>
