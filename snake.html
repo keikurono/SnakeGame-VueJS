@@ -12,7 +12,9 @@
     <main class="main">
       <div>
       <header class="header">{{title}}</header>
-      <div :class="{over: game_over}"></div>
+      <div :class="{over: game_over}">
+        <div class="screen" :disabled="{game_over}">Game Over</div>
+      </div>
         <div class="grid">
           <div v-for="(index, i) in 16" class="row">
             <div v-for="(index, j) in 16" :class="{
