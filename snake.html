@@ -8,27 +8,129 @@
   <title>SNAKE GAME</title>
 </head>
 <body>
-  <div id="app">
+  <div id="app" tabindex="-1" @keyup="keyup">{{printMeal}}{{printSnake}}
     <div class="main">
       <div class="grid">
-        <div v-for="index in 16" class="row">
-          <div v-for="index in 16" class="cell">
+        <div v-for="(index, i) in 16" class="row">
+          <div v-for="(index, j) in 16" :class="{
+            nothing: board[i][j]==0,
+            headSnake: board[i][j]==1,
+            bodySnake: board[i][j]==2,
+            mealSnake: board[i][j]==3
+          }">
           </div>
         </div>
       </div>
     </div>
   </div>
   <script>
-
-
-    var v = new Vue(
+    var game_board = new Vue(
       {
         el: '#app',
         data: {
+          dx: 0,
+          dy: 0,
+          dxtmp: 0,
+          dytmp: 0,
+          body_snake: [[3,2],[3,3],[3,4]],
+          board: [],
+          index_meal: [],
+          game_over: false
+        },
+        beforeMount() {
+          for(var i = 0; i < 16; i++)
+            this.board.push(new Array(16).fill(0));
+          this.uploadIndexMeal();
+          console.log('beforeMount!!!');
+        },
+        mounted() {
+          this.play();
         },
         computed: {
+          printMeal() {
+            var imeal = this.index_meal;
+            if ( imeal.length ) {
+              this.board[imeal[0]][imeal[1]] = 3
+            }
+            return null;
+          },
+          printSnake() {
+            body_snake = this.body_snake
+            for (ibody of body_snake) {
+              this.board[ibody[0]][ibody[1]] = 2;
+            }
+            this.board[ibody[0]][ibody[1]] = 1;
+            return null;
+          }
         },
         methods: {
+          uploadIndexMeal() {
+            while(true) {
+              idx_cell_rand = Math.floor(Math.random()*16*16);
+              ix = Math.floor(idx_cell_rand/16);
+              iy = idx_cell_rand % 16;
+              if ( this.board[ix][iy] == 0 ) {
+                this.index_meal = [ix, iy];
+                break;
+              }
+            }
+          },
+          keyup(event) {
+            if (event.keyCode == 38) { //up
+              if ( this.dx == 0 ) {
+                this.dxtmp = -1;
+                this.dytmp = 0;
+              }
+            }
+            if (event.keyCode == 39) { //right
+              if ( this.dy == 0 ) {
+                this.dxtmp = 1;
+                this.dytmp = 0;
+              }
+            }
+            if (event.keyCode == 40) { //down
+              if ( this.dy == 0 ) {
+                this.dxtmp = 0;
+                this.dytmp = 1;
+              }
+            }
+            if (event.keyCode == 37) { //left
+              if ( this.dx == 0 ) {
+                this.dxtmp = -1;
+                this.dytmp = 0;
+              }
+            }
+            console.log(this.dxtmp)
+            console.log(this.dytmp)
+          },
+          walk() {
+            if (this.dxtmp || this.dytmp ) {
+              ihead_snake =  this.body_snake.slice(-1).pop()
+              ihead_snake[0] += this.dx;
+              ihead_snake[1] += this.dy;
+              if ( ihead_snake[0] < 0 || ihead_snake[0] > 15 || ihead_snake[1] < 0 || ihead_snake[1] > 15 ) {
+                this.game_over = true;
+              } else {
+                this.body_snake.push(ihead_snake);
+                if ( ihead_snake[0] != this.index_meal[0] && ihead_snake[1] != this.index_meal[1] ) {
+                  var tail = this.body_snake.shift()
+                  this.board[tail[0]][tail[1]] = 0
+                }
+              }
+            }
+          },
+          upload() {
+            console.log('uploaded!!')
+            this.dx = this.dxtmp;
+            this.dy = this.dytmp;
+            this.walk();
+          },
+          play() {
+            const self = this;
+            setInterval(function () {
+              self.upload();
+            }, 1000);
+          }
         }
       }
     );
@@ -50,12 +152,32 @@
       border-top: 1px solid #e9e9e9;
       display: flex;
   }
-  .cell {
+  .nothing {
     height: 35px;
     width: 35px;
-    border-left: 1px solid #e9e9e9;
-    border-right: 1px solid #e9e9e9;
+    border: 1px solid #e9e9e9;
     background-color: white;
+  }
+  .headSnake {
+    height: 35px;
+    width: 35px;
+    border: 1px solid #e9e9e9;
+    background-image: url(assets/snake2.png);
+    background-size: 100% 100%;
+  }
+  .bodySnake {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    border: 1px solid #e9e9e9;
+    background: #9F7267
+  }
+  .mealSnake {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    border: 1px solid #e9e9e9;
+    background: #FF0000
   }
   </style>
 </body>
