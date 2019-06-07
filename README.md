@@ -1,5 +1,7 @@
 # snake
 
+Demo: http://216.158.238.148:8080
+
 ## Project setup
 ```
 npm install
