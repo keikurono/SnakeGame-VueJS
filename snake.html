@@ -9,7 +9,9 @@
 </head>
 <body>
   <div id="app" tabindex="-1" @keyup="keyup">{{printMeal}}{{printSnake}}
-    <div class="main">
+    <main class="main">
+      <div>
+      <header class="header">{{title}}</header>
       <div class="grid">
         <div v-for="(index, i) in 16" class="row">
           <div v-for="(index, j) in 16" :class="{
@@ -21,8 +23,11 @@
           </div>
         </div>
       </div>
+      <footer class="">score:{{score}}</footer>
+      </div>
     </div>
-  </div>
+
+  </main>
   <script>
     var game_board = new Vue(
       {
@@ -35,18 +40,22 @@
           body_snake: [[3,2],[3,3],[3,4]],
           board: [],
           index_meal: [],
-          game_over: false
+          game_over: false,
+          score: 0,
+          title: "SNAKE GAME"
         },
         beforeMount() {
           for(var i = 0; i < 16; i++)
             this.board.push(new Array(16).fill(0));
           this.uploadIndexMeal();
-          console.log('beforeMount!!!');
         },
         mounted() {
           this.play();
         },
         computed: {
+          score(){
+            return this.score;
+          },
           printMeal() {
             var imeal = this.index_meal;
             if ( imeal.length ) {
@@ -84,52 +93,61 @@
             }
             if (event.keyCode == 39) { //right
               if ( this.dy == 0 ) {
-                this.dxtmp = 1;
-                this.dytmp = 0;
-              }
-            }
-            if (event.keyCode == 40) { //down
-              if ( this.dy == 0 ) {
                 this.dxtmp = 0;
                 this.dytmp = 1;
               }
             }
-            if (event.keyCode == 37) { //left
+            if (event.keyCode == 40) { //down
               if ( this.dx == 0 ) {
-                this.dxtmp = -1;
+                this.dxtmp = 1;
                 this.dytmp = 0;
               }
             }
-            console.log(this.dxtmp)
-            console.log(this.dytmp)
+            if (event.keyCode == 37) { //left
+              if ( this.dy == 0 ) {
+                this.dxtmp = 0;
+                this.dytmp = -1;
+              }
+            }
           },
-          walk() {
-            if (this.dxtmp || this.dytmp ) {
-              ihead_snake =  this.body_snake.slice(-1).pop()
-              ihead_snake[0] += this.dx;
-              ihead_snake[1] += this.dy;
+          walk(dx, dy) {
+
+            if (dx != 0 || dy != 0 ) {
+              var bs = this.body_snake;
+
+              is = bs[bs.length - 1];
+              ihead_snake = new Array()
+              ihead_snake.push(is[0])
+              ihead_snake.push(is[1])
+              ihead_snake[0] += dx;
+              ihead_snake[1] += dy;
+
               if ( ihead_snake[0] < 0 || ihead_snake[0] > 15 || ihead_snake[1] < 0 || ihead_snake[1] > 15 ) {
                 this.game_over = true;
+                this.title = "GAME OVER"
               } else {
                 this.body_snake.push(ihead_snake);
-                if ( ihead_snake[0] != this.index_meal[0] && ihead_snake[1] != this.index_meal[1] ) {
+
+                if ( ihead_snake[0] != this.index_meal[0] || ihead_snake[1] != this.index_meal[1] ) { //
                   var tail = this.body_snake.shift()
                   this.board[tail[0]][tail[1]] = 0
+                } else {
+                  this.uploadIndexMeal()
+                  this.score += 1;
                 }
               }
             }
           },
           upload() {
-            console.log('uploaded!!')
             this.dx = this.dxtmp;
             this.dy = this.dytmp;
-            this.walk();
+            this.walk(this.dx, this.dy);
           },
           play() {
             const self = this;
             setInterval(function () {
               self.upload();
-            }, 1000);
+            }, 400);
           }
         }
       }
@@ -178,6 +196,11 @@
     border-radius: 50%;
     border: 1px solid #e9e9e9;
     background: #FF0000
+  }
+  .header {
+    text-align: center;
+    padding: 12px 0;
+
   }
   </style>
 </body>
