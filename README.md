@@ -1,6 +1,6 @@
 # snake
 
-Demo: http://216.158.238.148/snake.html
+Demo: http://216.158.238.148/snakegame/dist/
 
 ## Project setup
 ```
